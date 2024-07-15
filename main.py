@@ -5,11 +5,32 @@ from aiogram.types import Message, FSInputFile
 import random
 from gtts import gTTS
 import os
+from googletrans import Translator
+from translate import Translator
 from config import TOKEN
 
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
+
+
+rus_buchstaben = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+engl_buchstaben = 'abcdefghijklmnopqrstuvwxyz'
+
+
+@dp.message()
+async def transl(message: Message):
+    text = message.text
+    print(text)
+    if text[0].lower() in rus_buchstaben:
+        translation = Translator(from_lang='russian', to_lang='english')
+    elif text[0].lower() in engl_buchstaben:
+        translation = Translator(from_lang='english', to_lang='russian')
+    else:
+        await message.answer("Я не понимаю языка этого сообщения.")
+        return
+    translation = translation.translate(text)
+    await message.answer(translation)
 
 
 @dp.message(F.photo)
